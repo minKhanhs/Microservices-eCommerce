@@ -32,9 +32,13 @@
     <modules>
         <module>user-service</module>
         <module>api-gateway</module>
-    </modules>
+        <module>service-registry</module>
+        <module>product-service</module>
+        <module>cart-service</module>
+        <module>order-service</module>
+        <module>payment-service</module>
 
-    <!-- Quản lý phiên bản Spring Cloud -->
+    </modules>
     <dependencyManagement>
         <dependencies>
             <dependency>
