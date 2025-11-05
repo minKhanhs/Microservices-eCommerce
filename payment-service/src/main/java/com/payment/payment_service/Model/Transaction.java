@@ -19,7 +19,7 @@ import java.util.UUID;
 public class Transaction {
     @Id
     @Column(name = "transaction_id", updatable = false, nullable = false)
-    private UUID transactionId;
+    private UUID transaction_id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id", nullable = false)

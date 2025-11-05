@@ -21,12 +21,12 @@ public class Payment {
     @Id
     @GeneratedValue
     @Column(name = "payment_id", updatable = false, nullable = false)
-    private UUID paymentId;
+    private UUID payment_id;
     @Column(name = "order_id", nullable = false, unique = true)
-    private UUID orderId;
+    private UUID order_id;
 
     @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    private UUID user_id;
 
     @Column(name = "amount", nullable = false)
     private Double amount;
