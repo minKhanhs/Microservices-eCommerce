@@ -1,0 +1,202 @@
+services:
+  # ======================================================
+  # SERVICE REGISTRY
+  # ======================================================
+  service-registry:
+    build: ./service-registry
+    container_name: service-registry
+    ports:
+      - "8761:8761"
+
+  # ======================================================
+  # API GATEWAY
+  # ======================================================
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8796:8796"
+    depends_on:
+      - service-registry
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka
+      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
+
+  # ======================================================
+  # USER SERVICE + DB
+  # ======================================================
+  user-db:
+    image: postgres:16
+    container_name: user-db
+    environment:
+      - POSTGRES_DB=userdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=khanhvng123
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./user-service/db-data:/var/lib/postgresql/data
+
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/userdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=khanhvng123
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka
+      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
+    depends_on:
+      - service-registry
+      - user-db
+
+  # ======================================================
+  # PRODUCT SERVICE + DB
+  # ======================================================
+  product-db:
+    image: postgres:16
+    container_name: product-db
+    environment:
+      - POSTGRES_DB=productdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=khanhvng123
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./product-service/db-data:/var/lib/postgresql/data
+
+  product-service:
+    build: ./product-service
+    container_name: product-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://product-db:5432/productdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=khanhvng123
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka
+      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
+    depends_on:
+      - service-registry
+      - product-db
+
+  # ======================================================
+  # CART SERVICE + DB
+  # ======================================================
+  cart-db:
+    image: postgres:16
+    container_name: cart-db
+    environment:
+      - POSTGRES_DB=cartdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=khanhvng123
+    ports:
+      - "5435:5432"
+    volumes:
+      - ./cart-service/db-data:/var/lib/postgresql/data
+
+  cart-service:
+    build: ./cart-service
+    container_name: cart-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://cart-db:5432/cartdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=khanhvng123
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka
+      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
+    depends_on:
+      - service-registry
+      - cart-db
+      - product-service
+
+  # ======================================================
+  # ORDER SERVICE + DB
+  # ======================================================
+  order-db:
+    image: postgres:16
+    container_name: order-db
+    environment:
+      - POSTGRES_DB=orderdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=khanhvng123
+    ports:
+      - "5436:5432"
+    volumes:
+      - ./order-service/db-data:/var/lib/postgresql/data
+
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://order-db:5432/orderdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=khanhvng123
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka
+      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
+    depends_on:
+      - service-registry
+      - order-db
+      - payment-service
+
+  # ======================================================
+  # PAYMENT SERVICE + DB
+  # ======================================================
+  payment-db:
+    image: postgres:16
+    container_name: payment-db
+    environment:
+      - POSTGRES_DB=paymentdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=khanhvng123
+    ports:
+      - "5437:5432"
+    volumes:
+      - ./payment-service/db-data:/var/lib/postgresql/data
+
+  payment-service:
+    build: ./payment-service
+    container_name: payment-service
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://payment-db:5432/paymentdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=khanhvng123
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka
+      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
+    depends_on:
+      - service-registry
+      - payment-db
+
+  # ======================================================
+  # ZIPKIN (Distributed Tracing)
+  # ======================================================
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+
+  # ======================================================
+  # PGADMIN (Database UI)
+  # ======================================================
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - user-db
+      - product-db
+      - order-db
+      - payment-db
+      - cart-db
