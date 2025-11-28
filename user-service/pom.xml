@@ -6,11 +6,12 @@
 		<groupId>com.ecommerce</groupId>
 		<artifactId>microservice-ecommerce</artifactId>
 		<version>3.5.7</version>
-		<relativePath/> <!-- lookup parent from repository -->
+        <relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>com.user</groupId>
 	<artifactId>user-service</artifactId>
 	<version>3.5.7</version>
+    <packaging>jar</packaging>
 	<name>user-service</name>
 	<description>UserService</description>
 	<url/>

@@ -6,11 +6,12 @@
         <groupId>com.ecommerce</groupId>
         <artifactId>microservice-ecommerce</artifactId>
         <version>3.5.7</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath>../pom.xml</relativePath>
     </parent>
 	<groupId>com.api</groupId>
 	<artifactId>api-gateway</artifactId>
 	<version>3.5.7</version>
+    <packaging>jar</packaging>
 	<name>api-gateway</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
