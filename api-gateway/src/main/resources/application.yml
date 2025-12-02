@@ -6,20 +6,15 @@ spring:
     name: api-gateway
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: false
-          lower-case-service-id: true
-
       routes:
         # 1. User Service (Login/Register) - KHÔNG Filter
         - id: user-auth
-          uri: lb://user-service
+          uri: lb://USER-SERVICE
           predicates:
             - Path=/auth/**
 
         - id: user-secured
-          uri: lb://user-service
+          uri: lb://USER-SERVICE
           predicates:
             - Path=/user/**
           filters:
@@ -27,7 +22,7 @@ spring:
 
         # 2. Product Service - CÓ Filter
         - id: product-service
-          uri: lb://product-service
+          uri: lb://PRODUCT-SERVICE
           predicates:
             - Path=/products/**
           filters:
@@ -35,7 +30,7 @@ spring:
 
         # 3. Order Service - CÓ Filter
         - id: order-service
-          uri: lb://order-service
+          uri: lb://ORDER-SERVICE
           predicates:
             - Path=/orders/**
           filters:
@@ -43,7 +38,7 @@ spring:
 
         # 4. Cart Service (Giỏ hàng) - CÓ Filter
         - id: cart-service
-          uri: lb://cart-service
+          uri: lb://CART-SERVICE
           predicates:
             - Path=/cart/** # Ví dụ: /cart/add, /cart/remove
           filters:
@@ -51,7 +46,7 @@ spring:
 
         # 5. Payment Service (Thanh toán) - CÓ Filter
         - id: payment-service
-          uri: lb://payment-service
+          uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/payment/** # Ví dụ: /payment/create-url, /payment/callback
           filters:

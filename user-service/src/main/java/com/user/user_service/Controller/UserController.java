@@ -75,7 +75,7 @@ public class UserController {
     ) {
         try {
             UserResponse updatedUser = adminService.changeUserRole(userId, request.getNewRole());
-            return ResponseEntity.ok(updatedUser);
+            return ResponseEntity.ok("Update Successfully");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
