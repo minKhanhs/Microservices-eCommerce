@@ -18,3 +18,5 @@ docker-compose build payment-service
 docker-compose up -d
 ## Delete cache
 docker builder prune -a
+## Stop container
+docker-compose stop service

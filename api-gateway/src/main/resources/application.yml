@@ -1,0 +1,67 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+          lower-case-service-id: true
+
+      routes:
+        # 1. User Service (Login/Register) - KHÔNG Filter
+        - id: user-auth
+          uri: lb://user-service
+          predicates:
+            - Path=/auth/**
+
+        - id: user-secured
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+          filters:
+            - AuthenticationFilter
+
+        # 2. Product Service - CÓ Filter
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/products/**
+          filters:
+            - AuthenticationFilter
+
+        # 3. Order Service - CÓ Filter
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/orders/**
+          filters:
+            - AuthenticationFilter
+
+        # 4. Cart Service (Giỏ hàng) - CÓ Filter
+        - id: cart-service
+          uri: lb://cart-service
+          predicates:
+            - Path=/cart/** # Ví dụ: /cart/add, /cart/remove
+          filters:
+            - AuthenticationFilter
+
+        # 5. Payment Service (Thanh toán) - CÓ Filter
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/payment/** # Ví dụ: /payment/create-url, /payment/callback
+          filters:
+            - AuthenticationFilter
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  # THÊM ĐOẠN NÀY:
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+    ip-address: 127.0.0.1

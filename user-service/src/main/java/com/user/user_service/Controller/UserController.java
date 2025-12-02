@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 
 public class UserController {
@@ -21,6 +21,7 @@ public class UserController {
 
     // GET: Lấy tất cả users (có phân trang)
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Page<UserResponse>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -36,6 +37,7 @@ public class UserController {
 
     // GET: Lọc users theo role
     @GetMapping("/role/{role}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Page<UserResponse>> getUsersByRole(
             @PathVariable Role role,
             @RequestParam(defaultValue = "0") int page,
@@ -52,6 +54,7 @@ public class UserController {
 
     // GET: Xem chi tiết 1 user
     @GetMapping("/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> getUserById(@PathVariable UUID userId) {
         try {
             UserResponse user = adminService.getUserById(userId);
@@ -65,6 +68,7 @@ public class UserController {
 
     // PUT: Chuyển role user
     @PutMapping("/{userId}/role")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> changeUserRole(
             @PathVariable UUID userId,
             @RequestBody ChangeRoleRequest request
