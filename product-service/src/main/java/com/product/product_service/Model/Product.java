@@ -3,6 +3,7 @@ package com.product.product_service.Model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -15,7 +16,7 @@ import java.util.UUID;
 public class Product {
     @Id
     @GeneratedValue
-    @Column(name = "prodcuct_id", nullable = false, updatable = false)
+    @Column(name = "product_id", nullable = false, updatable = false)
     private UUID id;
 
     @Column(nullable = false)
@@ -26,7 +27,11 @@ public class Product {
     private double price;
     private int stock;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "product_categories", // Tên bảng trung gian
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private List<Category> categories;
 }

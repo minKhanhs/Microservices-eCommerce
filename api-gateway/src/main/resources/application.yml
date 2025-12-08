@@ -20,13 +20,20 @@ spring:
           filters:
             - AuthenticationFilter
 
-        # 2. Product Service - CÓ Filter
-        - id: product-service
+        # 2. Product Service
+        - id: product-service-secured
           uri: lb://PRODUCT-SERVICE
           predicates:
             - Path=/products/**
+            - Method=POST,PUT,DELETE
           filters:
             - AuthenticationFilter
+
+        - id: product-service-public
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/products/**
+            - Method=GET
 
         # 3. Order Service - CÓ Filter
         - id: order-service

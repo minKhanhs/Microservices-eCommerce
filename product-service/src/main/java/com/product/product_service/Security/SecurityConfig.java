@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 1. Cho phép TẤT CẢ mọi người (kể cả khách vãng lai) xem sản phẩm
+                        // 1. Cho phép TẤT CẢ mọi người xem sản phẩm
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
 
                         // 2. Chỉ ADMIN mới được Thêm/Sửa/Xóa (POST, PUT, DELETE)

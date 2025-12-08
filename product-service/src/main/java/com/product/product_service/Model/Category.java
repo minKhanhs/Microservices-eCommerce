@@ -1,5 +1,6 @@
 package com.product.product_service.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Categories")
+@Table(name = "categories")
 @Getter
 @Setter
 @Builder
@@ -18,9 +19,10 @@ public class Category {
     @Id
     @GeneratedValue
     @Column(name="category_id", nullable=false, updatable=false)
-    private UUID category_id;
+    private UUID id;
 
-    private String category_name;
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Product> product;
+    private String name;
+    @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
+    @JsonIgnore // Tránh vòng lặp vô tận khi convert JSON
+    private List<Product> products;
 }
