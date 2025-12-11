@@ -14,7 +14,7 @@ import java.util.UUID;
 public class CartItem {
     @Id
     @GeneratedValue
-    private UUID item_id;
+    private UUID id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;

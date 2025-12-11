@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -107,9 +108,10 @@ public class AuthService {
 
             // Extract username từ access token
             String username = jwtService.extractUsername(accessToken);
+            UUID userId = jwtService.extractUserId(accessToken);
 
             // Tìm user
-            User user = userRepository.findByUsername(username)
+            User user = userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
             // Xóa tất cả refresh token của user

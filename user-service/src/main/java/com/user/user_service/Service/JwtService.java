@@ -11,6 +11,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class JwtService {
@@ -28,6 +29,7 @@ public class JwtService {
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", user.getRole().name());
+        claims.put("userId", user.getUserId());
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -46,15 +48,20 @@ public class JwtService {
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
-    public String extractUsername(String token) {
+    private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignInKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
     }
-
+    public String extractUsername(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+    public UUID extractUserId(String token) {
+        String userIdString = extractAllClaims(token).get("userId", String.class);
+        return UUID.fromString(userIdString);
+    }
     public boolean isTokenValid(String token) {
         try {
             Jwts.parserBuilder()

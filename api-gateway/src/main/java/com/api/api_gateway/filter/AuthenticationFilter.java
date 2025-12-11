@@ -8,6 +8,8 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
 
@@ -44,11 +46,13 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     // 2. Lấy Username và Role từ Token
                     String username = jwtUtil.extractUsername(authHeader);
                     String role = jwtUtil.extractRole(authHeader);
+                    String userId = jwtUtil.extractUserId(authHeader);
 
                     // 3. Gắn vào Header để truyền xuống dưới
                     ServerHttpRequest request = exchange.getRequest()
                             .mutate()
                             .header("loggedInUser", username)
+                            .header("X-User-Id", userId)
                             .header("X-Role", role)
                             .build();
 

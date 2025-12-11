@@ -2,7 +2,6 @@ package com.cart.cart_service.Model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,11 +14,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "carts")
 public class Cart {
     @Id
     @GeneratedValue
-    private UUID cart_id;
-    private UUID user_id;
+    @Column(name = "cart_id")
+    private UUID id;
+    @Column(name = "user_id")
+    private UUID userId;
     @OneToMany(mappedBy = "cart",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cartItems;
 }
