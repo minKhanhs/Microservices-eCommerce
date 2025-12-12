@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.UUID;
 
-@FeignClient(name = "PRODUCT-SERVICE", url = "http://localhost:8082")
+@FeignClient(name = "PRODUCT-SERVICE")
 public interface ProductClient {
 
     // Gọi API xem chi tiết sản phẩm bên Product Service

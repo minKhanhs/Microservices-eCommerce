@@ -8,21 +8,24 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "order_item")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class OrderItem {
     @Id
     @Column(name = "item_id", updatable = false, nullable = false)
-    private UUID item_id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID itemId;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
     @Column(name = "product_id", nullable = false)
-    private UUID product_id;
+    private UUID productId;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;

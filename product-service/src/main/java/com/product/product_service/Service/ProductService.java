@@ -118,6 +118,28 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void reduceStock(UUID productId, int quantity) {
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+
+        if (product.getStock() < quantity) {
+            throw new RuntimeException("Sản phẩm " + product.getName() + " không đủ hàng (Còn: " + product.getStock() + ")");
+        }
+
+        product.setStock(product.getStock() - quantity);
+        productRepo.save(product);
+    }
+
+    @Transactional
+    public void increaseStock(UUID productId, int quantity) {
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+
+        product.setStock(product.getStock() + quantity);
+        productRepo.save(product);
+    }
+
     private ProductResponse mapToProductResponse(Product product) {
         return ProductResponse.builder()
                 .id(product.getId())

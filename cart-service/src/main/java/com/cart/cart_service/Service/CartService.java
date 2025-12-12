@@ -122,20 +122,15 @@ public class CartService {
     }
 
     // --- 2. XÓA SẢN PHẨM KHỎI GIỎ ---
-    public void removeFromCart(UUID userId, UUID productId) {
-        Cart cart = cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Giỏ hàng không tồn tại"));
-
-        // Tìm xem có item đó không để báo lỗi cho chuẩn (Optional)
-        boolean exists = cart.getCartItems().stream()
-                .anyMatch(item -> item.getProductRef().getProductId().equals(productId));
-
-        if (!exists) {
-            throw new RuntimeException("Sản phẩm không có trong giỏ hàng");
+    public void removeItems(UUID userId, List<UUID> productIds) {
+        if (productIds == null || productIds.isEmpty()) {
+            return;
         }
 
-        // Gọi Repository xóa trực tiếp
-        cartItemRepository.deleteCartItem(cart.getId(), productId);
+        // 2. Tìm giỏ hàng để lấy Cart ID
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Giỏ hàng không tồn tại"));
+        cartItemRepository.deleteCartItems(cart.getId(), productIds);
     }
 
     // --- 3. CẬP NHẬT SỐ LƯỢNG ---
@@ -171,7 +166,6 @@ public class CartService {
         item.setQuantity(quantity);
         cartRepository.save(cart);
     }
-
     // --- HÀM MAPPER (Chuyển Entity -> DTO) ---
     private CartResponse mapToCartResponse(Cart cart) {
         // Tính tổng tiền

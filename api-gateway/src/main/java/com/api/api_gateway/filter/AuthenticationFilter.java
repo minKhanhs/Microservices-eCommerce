@@ -47,7 +47,6 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     String username = jwtUtil.extractUsername(authHeader);
                     String role = jwtUtil.extractRole(authHeader);
                     String userId = jwtUtil.extractUserId(authHeader);
-
                     // 3. Gắn vào Header để truyền xuống dưới
                     ServerHttpRequest request = exchange.getRequest()
                             .mutate()

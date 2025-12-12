@@ -12,17 +12,19 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Order {
     @Id
     @Column(name = "order_id", updatable = false, nullable = false)
-    private UUID order_id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID orderId;
 
     @Column(name = "user_id", nullable = false)
-    private UUID user_id;
+    private UUID userId;
 
     @Column(name = "total_amount", nullable = false)
     private Double totalAmount;
@@ -37,6 +39,7 @@ public class Order {
     @Column(name = "phone", nullable = false, length = 20)
     private String phone;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> items;
 

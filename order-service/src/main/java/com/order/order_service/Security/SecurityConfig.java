@@ -1,7 +1,8 @@
-package com.user.user_service.security;
+package com.order.order_service.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,10 +27,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // API Auth công khai thì cho qua
-                        .requestMatchers("/user/profile/**").permitAll()
-                        .requestMatchers("/auth/**").permitAll()
-                        // Các API khác bắt buộc phải có thông tin User (từ Gateway gửi sang)
+                        .requestMatchers("/api/orders/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtHeaderFilter, UsernamePasswordAuthenticationFilter.class);

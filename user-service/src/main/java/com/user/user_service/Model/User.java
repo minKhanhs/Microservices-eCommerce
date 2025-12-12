@@ -30,12 +30,9 @@ public class User {
     private String email;
 
     @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+    private String password;
 
     private String fullName;
-    private String phone;
-    private String address;
-
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -44,7 +41,10 @@ public class User {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    private String phone;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses;
     // Một user có nhiều token
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Token> tokens;

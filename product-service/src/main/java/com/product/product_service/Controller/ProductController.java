@@ -123,4 +123,25 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi xóa");
         }
     }
+
+    @PutMapping("/reduce-stock/{id}")
+    public ResponseEntity<?> reduceStock(@PathVariable UUID id, @RequestParam int quantity) {
+        try {
+            productService.reduceStock(id, quantity);
+            return ResponseEntity.ok("Trừ kho thành công");
+        } catch (Exception e) {
+            // Trả về 400 Bad Request để bên Order Service biết mà dừng lại
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/increase-stock/{id}")
+    public ResponseEntity<?> increaseStock(@PathVariable UUID id, @RequestParam int quantity) {
+        try {
+            productService.increaseStock(id, quantity);
+            return ResponseEntity.ok("Đã hoàn kho");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -37,13 +38,13 @@ public class CartController {
     }
 
     // 2. Xóa sản phẩm khỏi giỏ
-    @DeleteMapping("/{productId}")
+    @DeleteMapping
     public ResponseEntity<?> removeFromCart(
             @RequestHeader("X-User-Id") UUID userId,
-            @PathVariable UUID productId
+            @RequestBody List<UUID> productIds
     ) {
         try {
-            cartService.removeFromCart(userId, productId);
+            cartService.removeItems(userId, productIds);
             return ResponseEntity.ok("Đã xóa sản phẩm khỏi giỏ hàng");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -63,4 +64,5 @@ public class CartController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 }
