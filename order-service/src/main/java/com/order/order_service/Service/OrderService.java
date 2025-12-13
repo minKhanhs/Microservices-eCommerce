@@ -286,6 +286,12 @@ public class OrderService {
         }
     }
 
+    public OrderResponse getOrderByIdInternal(UUID orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+        return mapToOrderResponse(order);
+    }
+
 
     private OrderResponse mapToOrderResponse(Order order) {
         List<OrderItemResponse> items = order.getItems().stream()

@@ -21,6 +21,13 @@ spring:
             - AuthenticationFilter
 
         # 2. Product Service
+        - id: product-service-admin-get
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/products/admin/**
+            - Method=GET
+          filters:
+            - AuthenticationFilter
         - id: product-service-secured
           uri: lb://PRODUCT-SERVICE
           predicates:

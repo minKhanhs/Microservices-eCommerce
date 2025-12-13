@@ -111,4 +111,15 @@ public class OrderController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @GetMapping("/internal/{orderId}")
+    public ResponseEntity<OrderResponse> getOrderInternal(@PathVariable UUID orderId) {
+        return ResponseEntity.ok(orderService.getOrderByIdInternal(orderId));
+    }
+    @PutMapping("/internal/{orderId}/status")
+    public ResponseEntity<?> updateStatusInternal(
+            @PathVariable UUID orderId,
+            @RequestParam OrderStatus status
+    ) {
+        return ResponseEntity.ok(orderService.updateOrderStatus(orderId, status));
+    }
 }

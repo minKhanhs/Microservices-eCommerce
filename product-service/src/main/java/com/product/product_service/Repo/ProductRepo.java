@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface ProductRepo extends JpaRepository<Product, UUID> {
     List<Product> findByCategories_Id(UUID categoryId);
     List<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description);
+    List<Product> findByStockLessThan(int threshold);
 }

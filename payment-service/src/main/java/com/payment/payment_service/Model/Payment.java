@@ -1,19 +1,18 @@
 package com.payment.payment_service.Model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "payment")
-@Data
+@Table(name = "payments")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -21,12 +20,12 @@ public class Payment {
     @Id
     @GeneratedValue
     @Column(name = "payment_id", updatable = false, nullable = false)
-    private UUID payment_id;
+    private UUID paymentId;
     @Column(name = "order_id", nullable = false, unique = true)
-    private UUID order_id;
+    private UUID orderId;
 
     @Column(name = "user_id", nullable = false)
-    private UUID user_id;
+    private UUID userId;
 
     @Column(name = "amount", nullable = false)
     private Double amount;
@@ -39,6 +38,7 @@ public class Payment {
     @Column(name = "status", nullable = false, length = 20)
     private PaymentStatus status;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions;
 
