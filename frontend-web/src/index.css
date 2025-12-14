@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Tùy chỉnh thêm cho Ant Design nếu cần */
+.ant-card-cover img {
+  border-bottom: 1px solid #f0f0f0;
+}
