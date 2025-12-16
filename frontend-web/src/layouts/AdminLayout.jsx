@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Layout, Menu, Button, theme } from 'antd';
+import { Layout, Menu, Button, theme, Dropdown, Avatar, Space } from 'antd'; // Thêm Dropdown, Avatar, Space
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -7,7 +7,8 @@ import {
   ShoppingOutlined,
   UserOutlined,
   FileTextOutlined,
-  LogoutOutlined
+  LogoutOutlined,
+  SettingOutlined
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
@@ -22,8 +23,8 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Menu Items
-  const items = [
+  // 1. Menu bên trái (Sidebar)
+  const sidebarItems = [
     {
       key: '/admin/dashboard',
       icon: <DashboardOutlined />,
@@ -46,16 +47,38 @@ const AdminLayout = () => {
     },
   ];
 
+  // Xử lý đăng xuất
   const handleLogout = () => {
     localStorage.clear();
     navigate('/admin/login');
   };
 
+  // 2. Menu Dropdown góc phải trên cùng (User Menu)
+  const userMenuItems = [
+    {
+      key: 'profile',
+      label: 'Hồ sơ cá nhân',
+      icon: <UserOutlined />,
+      onClick: () => navigate('/admin/profile'), // Link tới trang UserProfile vừa tạo
+    },
+    {
+      type: 'divider', // Đường gạch ngang
+    },
+    {
+      key: 'logout',
+      label: 'Đăng xuất',
+      icon: <LogoutOutlined />,
+      danger: true, // Màu đỏ cảnh báo
+      onClick: handleLogout,
+    },
+  ];
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical p-4 text-center">
-           <h1 className="text-white font-bold text-xl truncate">
+           {/* Logo thay đổi khi thu gọn */}
+           <h1 className="text-white font-bold text-xl truncate transition-all duration-300">
              {collapsed ? "MS" : "MyStore Admin"}
            </h1>
         </div>
@@ -63,35 +86,46 @@ const AdminLayout = () => {
           theme="dark"
           mode="inline"
           defaultSelectedKeys={['/admin/dashboard']}
-          selectedKeys={[location.pathname]}
-          items={items}
+          selectedKeys={[location.pathname]} // Highlight đúng menu đang đứng
+          items={sidebarItems}
           onClick={(e) => navigate(e.key)}
         />
       </Sider>
       
-      <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }} className="flex justify-between items-center pr-6">
+      <Layout style={{ overflow: 'hidden' }}>
+        <Header style={{ padding: 0,height: 64, background: colorBgContainer }} className="flex justify-between items-center pr-6 shadow-sm">
+          
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
             style={{ fontSize: '16px', width: 64, height: 64 }}
           />
+
+          {/* 3. Phần thông tin User ở góc phải (Đã nâng cấp) */}
           <div className="flex items-center gap-4">
-             <span className="font-semibold">Admin: {localStorage.getItem('username')}</span>
-             <Button type="primary" danger icon={<LogoutOutlined />} onClick={handleLogout}>
-                Thoát
-             </Button>
+             <Dropdown menu={{ items: userMenuItems }} trigger={['click']}>
+                <Space className="cursor-pointer hover:bg-gray-100 p-2 rounded transition-colors">
+                    {/* Avatar hiển thị chữ cái đầu của tên hoặc icon */}
+                    <Avatar style={{ backgroundColor: '#1677ff' }} icon={<UserOutlined />} />
+                    
+                    <span className="font-semibold text-gray-700">
+                        {localStorage.getItem('username') || "Admin"}
+                    </span>
+                </Space>
+             </Dropdown>
           </div>
+
         </Header>
         
         <Content
           style={{
-            margin: '24px 16px',
+            margin: '0 16px',
             padding: 24,
-            minHeight: 280,
+            height: 'calc(100vh - 64px)',
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
+            overflowY: 'auto'
           }}
         >
           <Outlet />
