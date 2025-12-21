@@ -5,12 +5,12 @@ import com.payment.payment_service.dto.PaymentRequest;
 import com.payment.payment_service.dto.PaymentResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -37,37 +37,21 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/vn-pay-callback")
-    public ResponseEntity<Void> vnPayCallback(@RequestParam Map<String, String> queryParams) {
-        // Địa chỉ Frontend của bạn (Trang Lịch sử đơn hàng)
-        String frontendUrl = "http://localhost:5173/orders";
-        String redirectUrl = "";
-
-        try {
-            // 1. Gọi Service xử lý logic (Lưu DB, update đơn hàng...)
-            paymentService.processVnPayCallback(queryParams);
-
-            // 2. Kiểm tra mã phản hồi để quyết định URL redirect
-            String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
-
-            if ("00".equals(vnp_ResponseCode)) {
-                // Thành công -> Redirect kèm param success
-                redirectUrl = frontendUrl + "?paymentStatus=success";
-            } else {
-                // Thất bại -> Redirect kèm param failed
-                redirectUrl = frontendUrl + "?paymentStatus=failed";
-            }
-
-        } catch (Exception e) {
-            // Lỗi hệ thống -> Redirect kèm param error
-            System.err.println("Lỗi xử lý callback: " + e.getMessage());
-            redirectUrl = frontendUrl + "?paymentStatus=error&message=" + e.getMessage();
+    @GetMapping("/vnpay-callback")
+    public ResponseEntity<?> handleVnPayCallback(HttpServletRequest request) {
+        Map<String, String> queryParams = new HashMap<>();
+        for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements();) {
+            String paramName = params.nextElement();
+            queryParams.put(paramName, request.getParameter(paramName));
         }
 
-        // 3. Thực hiện chuyển hướng
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create(redirectUrl));
-
-        return new ResponseEntity<>(headers, HttpStatus.FOUND); // 302 Found
+        try {
+            paymentService.processVnPayCallback(queryParams);
+            // Luôn trả về OK để Frontend nhận được
+            return ResponseEntity.ok(Map.of("status", "OK", "message", "Success"));
+        } catch (Exception e) {
+            e.printStackTrace(); // In lỗi ra console server để bạn dễ sửa nếu có
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

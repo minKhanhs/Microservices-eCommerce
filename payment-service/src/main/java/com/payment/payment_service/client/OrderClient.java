@@ -1,6 +1,7 @@
 package com.payment.payment_service.client;
 
 import com.payment.payment_service.dto.OrderResponse;
+import com.payment.payment_service.dto.OrderStatus;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +14,7 @@ import java.util.UUID;
 public interface OrderClient {
 
     @PutMapping("/orders/internal/{orderId}/status")
-    void updateOrderStatus(@PathVariable("orderId") UUID orderId, @RequestParam("status") String status);
+    void updateOrderStatus(@PathVariable("orderId") UUID orderId, @RequestParam("status") OrderStatus status);
     @GetMapping("/orders/internal/{orderId}")
     OrderResponse getOrderById(@PathVariable("orderId") UUID orderId);
 }

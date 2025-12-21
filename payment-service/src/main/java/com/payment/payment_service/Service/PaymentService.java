@@ -6,6 +6,7 @@ import com.payment.payment_service.Model.*;
 import com.payment.payment_service.Repo.PaymentRepo;
 import com.payment.payment_service.Repo.TransactionRepo;
 import com.payment.payment_service.dto.OrderResponse;
+import com.payment.payment_service.dto.OrderStatus;
 import com.payment.payment_service.dto.PaymentRequest;
 import com.payment.payment_service.dto.PaymentResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -98,6 +99,7 @@ public class PaymentService {
         String vnp_Amount = queryParams.get("vnp_Amount"); // VNPay trả về số tiền x100 (dạng String)
         String vnp_TxnRef = queryParams.get("vnp_TxnRef");
 
+
         UUID orderId = UUID.fromString(orderIdStr);
         Payment payment = paymentRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin thanh toán cho Order ID: " + orderId));
@@ -121,7 +123,7 @@ public class PaymentService {
             paymentRepository.save(payment);
 
             try {
-                orderClient.updateOrderStatus(orderId, "CONFIRMED");
+                orderClient.updateOrderStatus(orderId, OrderStatus.CONFIRMED);
             } catch (Exception e) {
                 System.err.println("Lỗi gọi Order Service: " + e.getMessage());
             }
@@ -130,6 +132,12 @@ public class PaymentService {
             transaction.setGatewayMessage("Giao dịch thất bại");
             payment.setStatus(PaymentStatus.FAILED);
             paymentRepository.save(payment);
+            try {
+                orderClient.updateOrderStatus(orderId, OrderStatus.CANCELLED);
+                System.out.println("Update Order CANCELLED success: " + orderId);
+            } catch (Exception e) {
+                System.err.println("Lỗi gọi Order Service (CANCELLED): " + e.getMessage());
+            }
         }
 
         transactionRepository.save(transaction);
@@ -156,7 +164,9 @@ public class PaymentService {
         vnp_Params.put("vnp_OrderInfo", orderId.toString());
         vnp_Params.put("vnp_OrderType", "other");
         vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", vnPayConfig.getVnp_ReturnUrl());
+
+        String returnUrl = vnPayConfig.getVnp_ReturnUrl() + "/" + orderId.toString();
+        vnp_Params.put("vnp_ReturnUrl", returnUrl);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
         ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");

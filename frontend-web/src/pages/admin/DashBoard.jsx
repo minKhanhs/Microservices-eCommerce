@@ -45,7 +45,6 @@ const Dashboard = () => {
         adminApi.getLowStock()
       ]);
 
-      // --- KHỚP DỮ LIỆU TỪ JSON BẠN GỬI ---
       const orderData = resOrderStats?.data || {};
 
       setStats({
@@ -230,7 +229,7 @@ const Dashboard = () => {
                },
                {
                  title: 'SL',
-                 dataIndex: 'stockQuantity', 
+                 dataIndex: 'stock',
                  key: 'stock',
                  width: 60,
                  render: (sl) => <Tag color="red">{sl}</Tag>

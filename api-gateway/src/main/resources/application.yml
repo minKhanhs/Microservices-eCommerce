@@ -6,6 +6,10 @@ spring:
     name: api-gateway
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true # Tự động tìm service trên Eureka
+          lower-case-service-id: true
       routes:
         # 1. User Service (Login/Register) - KHÔNG Filter
         - id: user-auth
@@ -58,11 +62,15 @@ spring:
           filters:
             - AuthenticationFilter
 
-        # 5. Payment Service (Thanh toán) - CÓ Filter
-        - id: payment-service
+        # 5. Payment Service (Thanh toán)
+        - id: payment-service-callback
           uri: lb://PAYMENT-SERVICE
           predicates:
-            - Path=/payment/** # Ví dụ: /payment/create-url, /payment/callback
+            - Path=/payment/vnpay-callback
+        - id: payment-service-secured
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/payment/**
           filters:
             - AuthenticationFilter
 eureka:

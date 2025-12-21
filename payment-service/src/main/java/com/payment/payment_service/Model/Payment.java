@@ -18,7 +18,7 @@ import java.util.UUID;
 @Builder
 public class Payment {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "payment_id", updatable = false, nullable = false)
     private UUID paymentId;
     @Column(name = "order_id", nullable = false, unique = true)

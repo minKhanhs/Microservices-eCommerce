@@ -39,7 +39,7 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // Hàm lấy username/userID từ token để truyền xuống dưới
+    // Hàm lấy username từ token để truyền xuống dưới
     public String extractUsername(String token) {
         return Jwts.parserBuilder().setSigningKey(getSignKey()).build().parseClaimsJws(token).getBody().getSubject();
     }

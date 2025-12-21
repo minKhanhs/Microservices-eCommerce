@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate,useSearchParams } from 'react-router-dom';
 import { 
     Card, Table, Tag, Button, message, Spin, Popconfirm, Breadcrumb, Divider 
 } from 'antd';
 import { 
     ArrowLeftOutlined, HomeOutlined, ShoppingOutlined, 
-    EnvironmentOutlined, PhoneOutlined, SolutionOutlined 
+    EnvironmentOutlined, SolutionOutlined 
 } from '@ant-design/icons';
+import axios from 'axios';
 import orderApi from '../../api/orderApi';
 import dayjs from 'dayjs';
 import { DEFAULT_PRODUCT_IMG, handleImageError } from '../../utils/constants';
@@ -15,6 +16,7 @@ const OrderDetailPage = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams()
   const [loading, setLoading] = useState(true);
   const [canceling, setCanceling] = useState(false);
 
@@ -33,10 +35,31 @@ const OrderDetailPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchOrderDetail();
-  }, [orderId]);
+  const checkPaymentResult = async () => {
+    // Kiểm tra nếu URL có chứa vnp_ResponseCode -> Là vừa từ VNPay về
+    if (searchParams.get('vnp_ResponseCode')) {
+      const params = Object.fromEntries([...searchParams]);
+      
+      try {
+        message.loading("Đang xác thực thanh toán...");
+        await axios.get('http://localhost:8080/payment/vnpay-callback', { params }); 
 
+        if (params.vnp_ResponseCode === '00') {
+            message.success("Thanh toán thành công!");
+        } else {
+            message.error("Thanh toán thất bại hoặc bị hủy.");
+        }
+
+        //Xóa query params trên URL để user F5 không bị gọi lại API
+        navigate(`/order/${orderId}`, { replace: true });
+        fetchOrderDetail();
+
+      } catch (error) {
+        console.error(error);
+        message.error("Lỗi xác thực thanh toán: " + (error.response?.data?.message || "Lỗi server"));
+      }
+    }
+  };
   // 2. Xử lý Hủy đơn
   const handleCancelOrder = async () => {
     setCanceling(true);
@@ -51,6 +74,18 @@ const OrderDetailPage = () => {
         setCanceling(false);
     }
   };
+  useEffect(() => {
+    // Nếu có params VNPay thì ưu tiên xử lý thanh toán
+    if (searchParams.get('vnp_ResponseCode')) {
+      checkPaymentResult();
+    } else {
+      // Nếu không thì load chi tiết đơn bình thường
+      fetchOrderDetail();
+    }
+  }, [orderId, searchParams]);
+  
+
+  
 
   const formatPrice = (price) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 
@@ -110,7 +145,6 @@ const OrderDetailPage = () => {
 
   if (loading) return <div className="h-screen flex justify-center items-center"><Spin size="large" /></div>;
   if (!order) return null;
-
   // Chỉ cho phép hủy nếu trạng thái là PENDING
   const canCancel = order.status === 'PENDING';
 

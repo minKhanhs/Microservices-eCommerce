@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -73,5 +75,29 @@ public class VnPayConfig {
             sb.append(chars.charAt(rnd.nextInt(chars.length())));
         }
         return sb.toString();
+    }
+    public static String hashAllFields(Map<String, String> fields, String secretKey) {
+        List<String> fieldNames = new ArrayList<>(fields.keySet());
+        Collections.sort(fieldNames);
+        StringBuilder sb = new StringBuilder();
+        Iterator<String> itr = fieldNames.iterator();
+        while (itr.hasNext()) {
+            String fieldName = itr.next();
+            String fieldValue = fields.get(fieldName);
+            if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                sb.append(fieldName);
+                sb.append("=");
+                try {
+                    //Cần encode dữ liệu theo chuẩn US_ASCII trước khi hash
+                    sb.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                if (itr.hasNext()) {
+                    sb.append("&");
+                }
+            }
+        }
+        return hmacSHA512(secretKey, sb.toString());
     }
 }

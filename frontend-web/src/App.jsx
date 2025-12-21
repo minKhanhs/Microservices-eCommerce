@@ -43,9 +43,7 @@ function App() {
            <Route path="orders" element={<OrderHistoryPage />} />
           <Route path="order/:orderId" element={<OrderDetailPage />} />
           <Route path="checkout" element={<CheckoutPage />} />
-           
           <Route path="cart" element={<CartPage />} />
-           {/* Các trang mua hàng khác */}
         </Route>
 
         {/* THẾ GIỚI 2: TRANG QUẢN TRỊ (ADMIN PORTAL) */}

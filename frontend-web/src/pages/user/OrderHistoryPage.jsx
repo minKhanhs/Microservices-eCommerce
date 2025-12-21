@@ -11,7 +11,7 @@ const OrderHistoryPage = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
-    const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [pagination, setPagination] = useState({
       current: 1,
       pageSize: 10,

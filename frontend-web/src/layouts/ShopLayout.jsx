@@ -62,7 +62,8 @@ const ShopLayout = () => {
   const handleLogout = () => {
     localStorage.clear(); // Xóa sạch token, role, username
     setCartCount(0);
-    navigate('/login');
+    navigate('/');
+    window.location.reload();
   };
 
   // Định nghĩa các mục trong Dropdown
