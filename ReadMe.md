@@ -5,7 +5,6 @@
 ![Spring Cloud](https://img.shields.io/badge/Spring_Cloud-Enabled-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Relational_DB-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-![Redis](https://img.shields.io/badge/Redis-Caching-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 
 > **Capstone Project - Hanoi University of Science and Technology (HUST)** > 🏆 **Grade:** 9.5/10 (A+)  
 > 👨‍💻 **Author:** Le Minh Khanh
