@@ -27,7 +27,7 @@ The system is decomposed into independent microservices based on **Bounded Conte
 | :--- | :--- | :--- | :--- |
 | **User Service** | Handles Authentication & Authorization (AuthN/AuthZ). | PostgreSQL | JWT, Spring Security |
 | **Product Service** | Manages product catalog and inventory. | PostgreSQL | Caching |
-| **Cart Service** | Handles temporary shopping cart data with high frequency I/O. | **Redis** | Key-Value Store |
+| **Cart Service** | Handles temporary shopping cart data with high frequency I/O. | PostgreSQL | Key-Value Store |
 | **Order Service** | Core domain logic for order lifecycle management. | PostgreSQL | Feign Client |
 | **Payment Service** | **Anti-Corruption Layer (ACL)** for Payment Gateway integration. | PostgreSQL | VNPay SDK |
 
